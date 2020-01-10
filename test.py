@@ -1,17 +1,33 @@
 import connection
-print(connection.mydb)
+import mysql.connector
 
-mycursor = connection.mydb.cursor()
 
-# TODO Turn into function that can be called
-# TODO Seperate functions for public posts vs private messages
+
+
+search_words = ["male","female"]
+
+# TODO Separate functions for public posts vs private messages
 # TODO Modify to iterate through a provided csv of search words
 
-def word_search_test(columns, table, search_column, search_term):
-    print(
-        #"SELECT post_date, author_name, post_title, post FROM forums_posts where post like '%male%' limit 3 "
-        "SELECT" + columns + "FROM" + table + "WHERE " + search_column + "LIKE '%" + search_term + "%'"
-        #TODO improve search function https://dev.mysql.com/doc/refman/8.0/en/fulltext-search.html
+def word_search(columns, table, search_column, search_term):
+    # Creates a SELECT/FROM/WHERE/LIKE query against the database.
+    mydb = mysql.connector.connect(
+        host=connection.myhost,
+        user=connection.myuser,
+        database=connection.mydatabase,
+        password=connection.mypassword
     )
+    mycursor = mydb.cursor()
+    mycursor.execute(
+        "SELECT " + columns + " FROM " + table + " WHERE " + search_column + " LIKE '%" + search_term + "%'"
+        # TODO improve search function https://dev.mysql.com/doc/refman/8.0/en/fulltext-search.html
+    )
+    myresult = mycursor.fetchall()
+    # TODO Output to csv
+    for x in myresult:
+        print(x)
+    mycursor.close()
 
-word_search_test("post", "forums_posts","post", "male")
+for word in search_words:
+    print("Results for " + word)
+    word_search("author_name, post_title, post", "forums_posts", "post", word)

@@ -2,6 +2,7 @@ import connection
 print(connection.mydb)
 
 mycursor = connection.mydb.cursor()
+search_words = ["male", "sex", "feminist"]
 
 # TODO Separate functions for public posts vs private messages
 # TODO Modify to iterate through a provided csv of search words
@@ -17,4 +18,8 @@ def word_search(columns, table, search_column, search_term):
     for x in myresult:
         print(x)
 
-word_search("post", "forums_posts","post", "male")
+def public_post_search(search_terms):
+    for i in search_terms:
+        word_search("author_name, post_date, post", "forums_posts", "post", i)
+
+public_post_search(search_words)
